@@ -1,5 +1,5 @@
 ﻿@page "/"
-
+@using BlazorApp.Model
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
@@ -7,11 +7,8 @@ Welcome to your new app.
 
 add value :
 <input placeholder="Something todo" @bind="@value" />
-<Counter IncrementAmount="@value" />
+<Counter IncrementAmount="@value" /><br/>
 
-<h1 style="font-style:@_headingFontStyle">@_headingText</h1>
-
-@message
 @for (var i = 1; i < 4; i++)
 {
     var buttonNumber = i;
@@ -21,7 +18,8 @@ add value :
         Button #@i
     </button>
 }
-<br />
+@message<br/>
+
 Password:
 
 <input @oninput="OnPasswordChanged"
@@ -32,13 +30,28 @@ Password:
 <button class="btn btn-primary" @onclick="ToggleShowPassword">
     @showAndHide password
 </button>
+<br />
+<input @bind="StartDate" @bind:format="yyyy-MM-dd" />
+<br />
+<EditForm Model="@exampleModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
 
+    <InputText id="name" @bind-Value="@exampleModel.Name" />
+
+    <button type="submit">Submit</button>
+</EditForm>
 
 @code{
-    public int value;
 
-    private string _headingFontStyle = "italic";
-    private string _headingText = "Put on your new Blazor!";
+    private ExampleModel exampleModel = new ExampleModel();
+
+    private void HandleValidSubmit()
+    {
+        Console.WriteLine("OnValidSubmit");
+    }
+
+    public int value;
 
     [Parameter]
     public int ParentYear { get; set; } = 1978;
@@ -70,7 +83,7 @@ Password:
     private void ToggleShowPassword()
     {
         showPassword = !showPassword;
-        if(showPassword)
+        if (showPassword)
         {
             showAndHide = "hide";
         }
@@ -80,4 +93,7 @@ Password:
         }
 
     }
+
+    [Parameter]
+    public DateTime StartDate { get; set; } = new DateTime(2020, 1, 1);
 }
