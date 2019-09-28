@@ -1,0 +1,127 @@
+﻿@page "/Join"
+
+@using BlazorApp.Model
+@inject BlazorApp.Objects.SessionState state
+
+    <div>
+        <h2>회원가입</h2>
+        <div class="input-group flex-nowrap mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="addon-wrapping">이메일</span>
+            </div>
+            <input type="text" @bind="@email" @onfocusout="insertEmail" class="form-control" placeholder="이메일" aria-label="Username" aria-describedby="addon-wrapping" />
+        </div>
+        <div class="@emailAlert " role="alert">
+            @emailMessage
+        </div>
+        <div class="input-group flex-nowrap mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="addon-wrapping">비밀번호</span>
+            </div>
+            <input type="password"  @bind="@password" class="form-control" placeholder="비밀번호" aria-label="Username" aria-describedby="addon-wrapping"/>
+        </div>
+        <div class="input-group flex-nowrap mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="addon-wrapping">비밀번호 확인</span>
+            </div>
+            <input type="password"  @bind="@passwordCheck" @onfocusout="inputPasswordCheck" class="form-control" placeholder="비밀번호 확인" aria-label="Username" aria-describedby="addon-wrapping" />
+        </div>
+        <div class="@passwordCheckAlert " role="alert">
+            @passwordCheckMessage
+        </div>
+        <br />
+        <button @onclick="register" type="button" class="btn btn-primary">회원가입</button>
+    </div>
+
+@code {
+    private string email { get; set; } = string.Empty;
+    private string password { get; set; } = string.Empty;
+    private string passwordCheck { get; set; } = string.Empty;
+
+    private string emailMessage { get; set; } = "이메일을 입력하세요.";
+    private string emailAlert = "alert alert-danger";
+
+    private string passwordCheckMessage { get; set; } = string.Empty;
+    private string passwordCheckAlert = string.Empty;
+
+    private void inputPasswordCheck()
+    {
+        if(passwordCheck == password)
+        {
+            passwordCheckMessage = "비밀번호와 일치합니다";
+            passwordCheckAlert = "alert alert-success";
+        }
+        else
+        {
+            passwordCheckMessage = "비밀번호와 일치하지 않습니다.";
+            passwordCheckAlert = "alert alert-danger";
+        }
+    }
+
+    private void insertEmail()
+    {
+        emailAlert = "alert alert-danger";
+        if (email.Length <= 0)
+        {
+            emailMessage = "이메일을 입력하세요.";
+            return;
+        }
+
+        if(email.Split('@').Length <= 1)
+        {
+            emailMessage = "이메일 형식이 아닙니다.";
+            return;
+        }
+
+        if(email.Split('.').Length <= 1)
+        {
+            emailMessage = "이메일 형식이 아닙니다.";
+            return;
+        }
+
+        if(!Mysql.CanIUseThisEmail(email))
+        {
+            emailMessage = "이미 존재하는 이메일 입니다.";
+            return;
+        }
+
+        emailMessage = string.Empty;
+        emailAlert = string.Empty;
+    }
+
+    private void register()
+    {
+        if (email.Length <= 0)
+        {
+            emailMessage = "이메일을 입력하세요.";
+            return;
+        }
+
+        if(email.Split('@').Length <= 1)
+        {
+            emailMessage = "이메일 형식이 아닙니다.";
+            return;
+        }
+
+        if(email.Split('.').Length <= 1)
+        {
+            emailMessage = "이메일 형식이 아닙니다.";
+            return;
+        }
+
+        if(!Mysql.CanIUseThisEmail(email))
+        {
+            emailMessage = "이미 존재하는 이메일 입니다.";
+            return;
+        }
+
+        if(passwordCheck != password)
+        {
+            passwordCheckMessage = "비밀번호와 일치하지 않습니다.";
+            passwordCheckAlert = "alert alert-danger";
+            return;
+        }
+
+        Mysql.Register(email, password);
+    }
+}

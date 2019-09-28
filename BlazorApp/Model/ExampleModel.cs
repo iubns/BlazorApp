@@ -2,7 +2,6 @@
 
 namespace BlazorApp.Model
 {
-
     public class ExampleModel
     {
         [Required]

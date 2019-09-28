@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using BlazorApp.Model
+
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
@@ -7,7 +8,8 @@ Welcome to your new app.
 
 add value :
 <input placeholder="Something todo" @bind="@value" />
-<Counter IncrementAmount="@value" /><br/>
+<Counter IncrementAmount="@value" />
+<br />
 
 @for (var i = 1; i < 4; i++)
 {
@@ -18,7 +20,8 @@ add value :
         Button #@i
     </button>
 }
-@message<br/>
+@message
+<br />
 
 Password:
 
@@ -43,7 +46,7 @@ Password:
 </EditForm>
 
 @code{
-
+    
     private ExampleModel exampleModel = new ExampleModel();
 
     private void HandleValidSubmit()
