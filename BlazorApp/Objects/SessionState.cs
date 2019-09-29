@@ -2,6 +2,6 @@
 {
     public class SessionState
     {
-        public string LoingSession { get; set; } = "a";
+        public string LoingSession { get; set; } = string.Empty;
     }
 }
