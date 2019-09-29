@@ -1,6 +1,8 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace BlazorApp.Model
 {
@@ -8,6 +10,7 @@ namespace BlazorApp.Model
     {
         public static bool Login(string email, string password)
         {
+            password = GetHash(password);
             string sql = $"select * from user where email='{email}' and password='{password}'";
             try
             {
@@ -28,9 +31,14 @@ namespace BlazorApp.Model
                     return true;
                 }
             }
-            catch{}
+            catch (Exception e)
+            {
+                using (StreamWriter streamWriter = new StreamWriter(new FileStream("log.ini", FileMode.OpenOrCreate)))
+                    streamWriter.WriteLine(e.ToString());
+            }
             return false;
         }
+
         public static bool CanIUseThisEmail(string email)
         {
             string sql = $"select * from user where email='{email}'";
@@ -53,12 +61,16 @@ namespace BlazorApp.Model
                     return true;
                 }
             }
-            catch{}
+            catch(Exception e){
+                using (StreamWriter streamWriter = new StreamWriter(new FileStream("log.ini", FileMode.OpenOrCreate)))
+                    streamWriter.WriteLine(e.ToString());
+            }
             return false;
         }
 
         public static void Register(string email, string password)
         {
+            password = GetHash(password);
             string sql = $"insert into user (email, password) values ('{email}', '{password}')";
             try
             {
@@ -75,6 +87,21 @@ namespace BlazorApp.Model
                 }
             }
             catch{}
+        }
+
+        private static string GetHash(string value)
+        {
+            value += "iubns's erp";
+            byte[] keyArray = Encoding.UTF8.GetBytes(value);
+            SHA1Managed enc = new SHA1Managed();
+            byte[] encodedKey = enc.ComputeHash(enc.ComputeHash(keyArray));
+            StringBuilder myBuilder = new StringBuilder(encodedKey.Length);
+
+            foreach (byte b in encodedKey)
+            {
+                myBuilder.Append(b.ToString("X"));
+            }
+            return myBuilder.ToString();
         }
     }
 }

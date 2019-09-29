@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject BlazorApp.Objects.SessionState state
+@inject NavigationManager NavigationManager
 
 <div class="main">
     <div class="top-row px-4">
@@ -19,16 +20,18 @@
 @code
 {
     private string login { get; set; } = "로그인";
-    private void run()
+    protected override void OnInitialized()
     {
-        if (state.LoingSession == string.Empty)
+        if (state.LoingSession == string.Empty
+            && !NavigationManager.Uri.EndsWith("/Login")
+            && !NavigationManager.Uri.EndsWith("/Join"))
         {
             login = "로그인";
+            //NavigationManager.NavigateTo("/Login");
         }
         else
         {
-            login = "이미 로그인 되어 있음";
+            login = state.LoingSession;
         }
-
     }
 }

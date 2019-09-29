@@ -1,8 +1,8 @@
 ﻿@page "/Login"
 
 @using BlazorApp.Model
-@using BlazorApp.Objects
 @inject BlazorApp.Objects.SessionState state
+@inject NavigationManager NavigationManager
 
 <div>
     <h2>로그인</h2>
@@ -10,27 +10,34 @@
         <div class="input-group-prepend">
             <span class="input-group-text" id="addon-wrapping">이메일</span>
         </div>
-        <input type="text" value="@user.ID" class="form-control" placeholder="이메일" aria-label="Username" aria-describedby="addon-wrapping">
+        <input type="text" @bind="@ID" class="form-control" placeholder="이메일" aria-label="Username" aria-describedby="addon-wrapping"/>
     </div>
     <div class="input-group flex-nowrap mb-3">
         <div class="input-group-prepend">
             <span class="input-group-text" id="addon-wrapping">비밀번호</span>
         </div>
-        <input type="text" value="@user.password" class="form-control" placeholder="비밀번호" aria-label="Username" aria-describedby="addon-wrapping">
+        <input type="password" @bind="@password" class="form-control" placeholder="비밀번호" aria-label="Username" aria-describedby="addon-wrapping"/>
     </div>
+    @message<br/>
     <button type="button" class="btn btn-primary" @onclick="login">로그인</button>
     <a href="/Join" class="btn btn-primary">회원가입</a>
 </div>
 
 @code {
-    private User user { get; set; } = new User();
-
-    public string result;
+    private string ID { get; set; }
+    private string password { get; set; }
+    public string message = string.Empty;
 
     private void login()
     {
-        result = Mysql.Login(user.ID, user.password).ToString();
-        state.LoingSession = "true";
+        if(Mysql.Login(ID, password))
+        {
+            state.LoingSession = ID;
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            message = "아이디 비밀번호 확인";
+        }
     }
-
 }
